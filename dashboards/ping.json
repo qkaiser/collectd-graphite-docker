@@ -1,0 +1,20 @@
+[
+  {
+    "target": [
+      "collectd.localhost.ping.ping-www_gremwell_com",
+      "collectd.localhost.ping.ping-www_google_com"
+    ]
+  },
+  {
+    "target": [
+      "collectd.localhost.ping.ping_droprate-www_google_com",
+      "collectd.localhost.ping.ping_droprate-www_gremwell_com"
+    ]
+  },
+  {
+    "target": [
+      "collectd.localhost.ping.ping_stddev-www_google_com",
+      "collectd.localhost.ping.ping_stddev-www_gremwell_com"
+    ]
+  }
+]

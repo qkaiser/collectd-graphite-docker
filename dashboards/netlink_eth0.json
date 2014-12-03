@@ -1,0 +1,20 @@
+[
+  {
+    "target": [
+      "collectd.localhost.netlink-eth0.if_packets.tx",
+      "collectd.localhost.netlink-eth0.if_packets.rx"
+    ]
+  },
+  {
+    "target": [
+      "collectd.localhost.netlink-eth0.if_errors.tx",
+      "collectd.localhost.netlink-eth0.if_errors.rx"
+    ]
+  },
+  {
+    "target": [
+      "collectd.localhost.netlink-eth0.if_dropped.rx",
+      "collectd.localhost.netlink-eth0.if_dropped.tx"
+    ]
+  }
+]
