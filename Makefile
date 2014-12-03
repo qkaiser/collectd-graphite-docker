@@ -1,4 +1,4 @@
-all: pull build run
+all: collectd pull build run
 
 pull:
 	@docker pull mackerel/graphite
@@ -10,7 +10,7 @@ build:
 
 run:
 	@docker start $(shell cat .id)
-
+	@echo "Open your browser and go to http://localhost:8000/ to open Graphite UI."
 collectd:
 	apt-get install -y collectd
 	cp collectd.conf /etc/collectd/collectd.conf
