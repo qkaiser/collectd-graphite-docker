@@ -43,7 +43,13 @@ else
 		build_collectd
 	fi
 	if [ "$1" = "list" ]; then
-		for i in $(ls ~/.grmwl); do echo "[+] $i"; done
+		for i in $(ls ~/.grmwl); do 
+	                if sudo docker ps --no-trunc | grep `cat ~/.grmwl/$i/id` 2>&1 >/dev/null; then
+				echo "[+] $i - running"
+			else
+				echo "[+] $i - stopped"
+			fi
+		done
 	elif [ "$1" = "create" ]; then
 		if [ -x ~/.grmwl/$2/id ]; then
 			echo "[!] Project already created."
