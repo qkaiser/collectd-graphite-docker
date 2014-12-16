@@ -9,10 +9,12 @@ build(){
 	mkdir -p ~/.grmwl/$1/log
 	mkdir -p ~/.grmwl/$1/whisper
 	touch ~/.grmwl/$1/id	
-	tmp=`sudo docker run -d --name $1 -v ~/.grmwl/$1/log:/var/log/graphite -v ~/.grmwl/$1/whisper:/var/lib/graphite/storage/whisper -v /etc/localtime:/etc/localtime:ro -p 8000:8000 -p 2003:2003 -p 2004:2004 mackerel/graphite`
+        cp collectd.conf ~/.grmwl/$1/collectd.conf
+	cp local_settings.py ~/.grmwl/$1/local_settings.py
+	tmp=`sudo docker run -d --name $1 -v ~/.grmwl/$1/log:/var/log/graphite -v ~/.grmwl/$1/whisper:/var/lib/graphite/storage/whisper -v ~/.grmwl/$1/local_settings.py:/var/lib/graphite/lib/graphite/local_settings.py -p 8000:8000 -p 2003:2003 -p 2004:2004 mackerel/graphite`
 	echo $tmp > ~/.grmwl/$1/id
-	cp collectd.conf ~/.grmwl/$1/collectd.conf
 }
+
 run(){
 	sudo service collectd stop
 	sudo collectd -C ~/.grmwl/$1/collectd.conf
@@ -25,45 +27,52 @@ stop(){
 }
 
 clean_container(){
-	sudo docker ps -a | grep `cat ~/.grmwl/$1/id` | awk '{print $1}' | xargs --no-run-if-empty sudo docker rm -f
+	sudo docker ps -a --no-trunc | grep `cat ~/.grmwl/$1/id` | awk '{print $1}' | xargs --no-run-if-empty sudo docker rm -f
 }
 
 
-if which collectd 2>&1 >/dev/null; then
-	if [ "$1" = "create" ]; then
-		if [ -x ~/.grmwl/$2/id ]; then
-			echo "Project already created."
-		else
-			echo "Creating project $2..."
-			pull
-			build $2
-		fi
-
-	elif [ "$1" = "run" ]; then
-		if [ -x ~/.grmwl/$2/id ]; then
-			echo "Project does not exist, you need to create it first ($0 create $2)"
-		else
-			echo "Running project $2..."
-			run $2
-		fi
-	elif [ "$1" = "stop" ]; then
-		if [ -x ~/.grmwl/$2/id ]; then
-			echo "Project does not exist, you need to create it first ($0 create $2)"
-		else
-			echo "Stopping project $2..."
-			stop $2
-		fi
-	elif [ "$1" = "delete" ]; then
-		if [ -x ~/.grmwl/$2/id ]; then
-			echo "Project $2 does not exist."
-		else
-			echo "Deleting project $2..."
-			clean_container $2
-			rm ~/.grmwl/$2 -R
-		fi
+if ! which collectd 2>&1 >/dev/null; then
+	echo "Installing collectd ..."
+	OS=`lsb-release -si`
+	if [ "$OS" -eq "Ubuntu" ]; then
+		sudo apt-get install collectd -y
+	elif [ "$OS" -eq "Fedora" ]; then
+		sudo yum install collectd -y
 	else
-		echo "Usage : (create,run,delete) project"
+		echo "Unknown OS, please install collectd manually."
+	fi 
+fi	
+if [ "$1" = "create" ]; then
+	if [ -x ~/.grmwl/$2/id ]; then
+		echo "Project already created."
+	else
+		echo "Creating project $2..."
+		pull
+		build $2
+	fi
+
+elif [ "$1" = "run" ]; then
+	if [ -x ~/.grmwl/$2/id ]; then
+		echo "Project does not exist, you need to create it first ($0 create $2)"
+	else
+		echo "Running project $2..."
+		run $2
+	fi
+elif [ "$1" = "stop" ]; then
+	if [ -x ~/.grmwl/$2/id ]; then
+		echo "Project does not exist, you need to create it first ($0 create $2)"
+	else
+		echo "Stopping project $2..."
+		stop $2
+	fi
+elif [ "$1" = "delete" ]; then
+	if [ -x ~/.grmwl/$2/id ]; then
+		echo "Project $2 does not exist."
+	else
+		echo "Deleting project $2..."
+		clean_container $2
+		sudo rm ~/.grmwl/$2 -R
 	fi
 else
-	echo "collectd is no installed."
+	echo "Usage : (create,run,delete) project"
 fi
