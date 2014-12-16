@@ -42,7 +42,7 @@ else
 		build_collectd
 	fi
 	if [ "$1" = "list" ]; then
-		ls ~/.grmwl/
+		for i in $(ls ~/.grmwl); do echo "[+] $i"; done
 	elif [ "$1" = "create" ]; then
 		if [ -x ~/.grmwl/$2/id ]; then
 			echo "[!] Project already created."
