@@ -67,7 +67,7 @@ else
 				echo "[!] Project $2 is already running."
 			else	
 				echo "[+] Running project $2..."
-				run $2
+				start $2
 			fi
 		fi
 	elif [ "$1" = "stop" ]; then
