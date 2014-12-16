@@ -22,7 +22,7 @@ build_collectd(){
 
 run(){
 	sudo service collectd stop
-	sudo collectd -C ~/.grmwl/$1/collectd.conf
+	sudo /opt/collectd/sbin/collectd -C ~/.grmwl/$1/collectd.conf
 	sudo docker start `cat ~/.grmwl/$1/id`
 	echo "[+] Open your browser and go to http://localhost:8000/ to open Graphite UI."
 }
