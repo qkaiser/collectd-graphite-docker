@@ -17,17 +17,18 @@ build(){
 
 build_collectd(){
 	echo "[+] Collectd is missing, building ..."
+	sudo apt-get install libmnl-dev libcurl4-gnutls-dev librtmp-dev libgnutls-dev libgcrypt11-dev
 	cd collectd && ./build.sh 1>/dev/null && ./configure 1>/dev/null && sudo make && sudo make install
 }
 
-run(){
-	sudo service collectd stop
+start(){
 	sudo /opt/collectd/sbin/collectd -C ~/.grmwl/$1/collectd.conf
 	sudo docker start `cat ~/.grmwl/$1/id`
 	echo "[+] Open your browser and go to http://localhost:8000/ to open Graphite UI."
 }
 
 stop(){
+	ps xa -o pid,cmd | grep "/opt/collectd/sbin/collectd -C ~/.grmwl/$1/collectd.conf" | cut -c 1- | cut -d\  -f 1 | xargs --no-run-if-empty sudo kill ps aux
 	sudo docker stop `cat ~/.grmwl/$1/id`
 }
 
@@ -52,12 +53,16 @@ else
 			build $2
 		fi
 	
-	elif [ "$1" = "run" ]; then
+	elif [ "$1" = "start" ]; then
 		if [ -x ~/.grmwl/$2/id ]; then
 			echo "[!] Project does not exist, you need to create it first ($0 create $2)"
 		else
-			echo "[+] Running project $2..."
-			run $2
+			if sudo docker ps --no-trunc | grep `cat ~/.grmwl/$2/id` 2>&1 >/dev/null; then
+				echo "[!] Project $2 is already running."
+			else	
+				echo "[+] Running project $2..."
+				run $2
+			fi
 		fi
 	elif [ "$1" = "stop" ]; then
 		if [ -x ~/.grmwl/$2/id ]; then
@@ -66,6 +71,9 @@ else
 			echo "[+] Stopping project $2..."
 			stop $2
 		fi
+	elif [ "$1" = "restart" ]; then
+		stop $2
+		start $2
 	elif [ "$1" = "delete" ]; then
 		if [ -x ~/.grmwl/$2/id ]; then
 			echo "[!] Project $2 does not exist."
