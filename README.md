@@ -7,8 +7,8 @@ The idea is to have a workspace for each pentest that will have his own containe
 
 Dependencies
 
-* docker
-* collectd (custom build from https://github.com/qkaiser/collectd)
+* [Docker](http://www.docker.io)
+* [collectd](https://collectd.org) (custom build from https://github.com/qkaiser/collectd)
 
 
 ### Commands
@@ -35,6 +35,14 @@ $ ./grmwl stop new_project
 
 ```shell
 $ ./grmwl delete new_project
+```
+
+#### List workspaces
+
+```shell
+$ ./grmwl list
+[+] new_project - running
+[+] old_project - stopped
 ```
 
 ### Workspace
