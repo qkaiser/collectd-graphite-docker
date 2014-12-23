@@ -15,10 +15,16 @@ build(){
 	echo $tmp > ~/.grmwl/$1/id
 }
 
-build_collectd(){
-	echo "[+] Collectd is missing, building ..."
+install_collectd(){
+	git submodule init
+	git submodule update
 	sudo apt-get install libmnl-dev libcurl4-gnutls-dev librtmp-dev libgnutls-dev libgcrypt11-dev
 	cd collectd && ./build.sh 1>/dev/null && ./configure 1>/dev/null && sudo make && sudo make install
+}
+
+install_docker(){
+	sudo apt-get install docker
+	sudo apt-get install docker.io
 }
 
 start(){
@@ -36,59 +42,56 @@ clean_container(){
 	sudo docker ps -a --no-trunc | grep `cat ~/.grmwl/$1/id` | awk '{print $1}' | xargs --no-run-if-empty sudo docker rm -f
 }
 
-if ! which docker 2>&1 >/dev/null; then
-	echo "[!] Can't run without docker dude."
-else	
-	if [ ! -x /opt/collectd ]; then
-		build_collectd
-	fi
-	if [ "$1" = "list" ]; then
-		for i in $(ls ~/.grmwl); do 
-	                if sudo docker ps --no-trunc | grep `cat ~/.grmwl/$i/id` 2>&1 >/dev/null; then
-				echo "[+] $i - running"
-			else
-				echo "[+] $i - stopped"
-			fi
-		done
-	elif [ "$1" = "create" ]; then
-		if [ -x ~/.grmwl/$2/id ]; then
-			echo "[!] Project already created."
+if [ "$1" = "init" ]; then
+	install_collectd
+	install_docker	
+elif [ "$1" = "list" ]; then
+	for i in $(ls ~/.grmwl); do 
+                if sudo docker ps --no-trunc | grep `cat ~/.grmwl/$i/id` 2>&1 >/dev/null; then
+			echo "[+] $i - running"
 		else
-			echo "[+] Creating project $2..."
-			pull
-			build $2
+			echo "[+] $i - stopped"
 		fi
-	
-	elif [ "$1" = "start" ]; then
-		if [ -x ~/.grmwl/$2/id ]; then
-			echo "[!] Project does not exist, you need to create it first ($0 create $2)"
-		else
-			if sudo docker ps --no-trunc | grep `cat ~/.grmwl/$2/id` 2>&1 >/dev/null; then
-				echo "[!] Project $2 is already running."
-			else	
-				echo "[+] Running project $2..."
-				start $2
-			fi
-		fi
-	elif [ "$1" = "stop" ]; then
-		if [ -x ~/.grmwl/$2/id ]; then
-			echo "[!] Project does not exist, you need to create it first ($0 create $2)"
-		else
-			echo "[+] Stopping project $2..."
-			stop $2
-		fi
-	elif [ "$1" = "restart" ]; then
-		stop $2
-		start $2
-	elif [ "$1" = "delete" ]; then
-		if [ -x ~/.grmwl/$2/id ]; then
-			echo "[!] Project $2 does not exist."
-		else
-			echo "[+] Deleting project $2..."
-			clean_container $2
-			sudo rm ~/.grmwl/$2 -R
-		fi
+	done
+elif [ "$1" = "create" ]; then
+	if [ -x ~/.grmwl/$2/id ]; then
+		echo "[!] Project already created."
 	else
-		echo "Usage : (create,run,delete) project"
+		echo "[+] Creating project $2..."
+		pull
+		build $2
 	fi
+	
+elif [ "$1" = "start" ]; then
+	if [ -x ~/.grmwl/$2/id ]; then
+		echo "[!] Project does not exist, you need to create it first ($0 create $2)"
+	else
+		if sudo docker ps --no-trunc | grep `cat ~/.grmwl/$2/id` 2>&1 >/dev/null; then
+			echo "[!] Project $2 is already running."
+		else	
+			echo "[+] Running project $2..."
+			start $2
+		fi
+	fi
+elif [ "$1" = "stop" ]; then
+	if [ -x ~/.grmwl/$2/id ]; then
+		echo "[!] Project does not exist, you need to create it first ($0 create $2)"
+	else
+		echo "[+] Stopping project $2..."
+		stop $2
+	fi
+elif [ "$1" = "restart" ]; then
+	stop $2
+	start $2
+elif [ "$1" = "delete" ]; then
+	if [ -x ~/.grmwl/$2/id ]; then
+		echo "[!] Project $2 does not exist."
+	else
+		echo "[+] Deleting project $2..."
+		clean_container $2
+		sudo rm ~/.grmwl/$2 -R
+	fi
+else
+	echo "Usage : {init, list, create,run,delete} [project]"
 fi
+

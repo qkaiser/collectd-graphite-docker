@@ -13,6 +13,13 @@ Dependencies
 
 ### Commands
 
+#### Init dependencies 
+
+
+```shell
+$ ./grmwl init
+```
+
 #### Create a new workspace
 
 ```shell
