@@ -24,7 +24,7 @@ build(){
     	#dns request to the default gateway, every 10s (in future need option to disable specify custom addr)
 
 	sed -i "s/<Plugin netlink><\/Plugin>/<Plugin netlink>\n\tInterface \"$interface\"\n\tVerboseInterface \"$interface\"\n\tQDisc \"eth0\" \"pfifo_fast-1:0\"\n\tClass \"ppp0\" \"htb-1:10\"\n\tFilter \"ppp0\" \"u32-1:0\"\n\tIgnoreSelected false\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
-	sed -i "s/<Plugin ping><\/Plugin>/<Plugin ping>\n\tHost \"$gateway\"\n\tInterval 1.0\n\tTimeout 0.9\n\tTTL 255\n\tSourceAddress \"$addr\"\n\tDevice \"$interface\"\n\tMaxMissed -1\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
+	sed -i "s/<Plugin ping><\/Plugin>/<Plugin ping>\n\tHost \"$gateway\"\n\tInterval 0.0166\n\tTimeout 0.9\n\tTTL 255\n\tSourceAddress \"$addr\"\n\tDevice \"$interface\"\n\tMaxMissed -1\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
 	sed -i "s/<Plugin dns><\/Plugin>/<Plugin dns>\n\tInterface \"$interface\"\n\tIgnoreSource \"192.168.0.1\"\n\tSelectNumericQueryTypes false\n\t<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
 
 	sed -i "s/<Plugin ethstat><\/Plugin>/<Plugin ethstat>\n\tInterface \"$interface\"\n\tMap \"rx_csum_offload_errors\" \"if_rx_errors\" \"checksum_offload\"\n\tMap \"multicast\" \"if_multicast\"\n\tMappedOnly false\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
