@@ -10,6 +10,31 @@ build(){
 	mkdir -p ~/.grmwl/$1/whisper
 	touch ~/.grmwl/$1/id	
         cp collectd.conf ~/.grmwl/$1/collectd.conf
+	
+	hostname=`hostname`
+	sed -i "s/Hostname \"localhost\"/Hostname \"$hostname\"/g" ~/.grmwl/$1/collectd.conf
+	
+	interface=$2
+	addr=`ifconfig $interface | grep 'inet addr:'| cut -d: -f2 | awk '{ print $1}')`
+	bcast=`ifconfig $interface | grep 'Bcast:'| cut -d: -f3 | awk '{ print $1}'`
+	subnet=`ifconfig $interface | grep 'inet addr:'| cut -d: -f2 | cut -d. -f1,2,3 | awk '{ print $1}'`
+	gateway=`netstat -r | grep 'default' | awk '{ print $2}'`
+	page="icanhazip.com"
+	#arping of the default gateway, 1pps
+    	#dns request to the default gateway, every 10s (in future need option to disable specify custom addr)
+
+	sed -i "s/<Plugin netlink><\/Plugin>/<Plugin netlink>\n\tInterface \"$interface\"\n\tVerboseInterface \"$interface\"\n\tQDisc \"eth0\" \"pfifo_fast-1:0\"\n\tClass \"ppp0\" \"htb-1:10\"\n\tFilter \"ppp0\" \"u32-1:0\"\n\tIgnoreSelected false\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
+	sed -i "s/<Plugin ping><\/Plugin>/<Plugin ping>\n\tHost \"$gateway\"\n\tInterval 1.0\n\tTimeout 0.9\n\tTTL 255\n\tSourceAddress \"$addr\"\n\tDevice \"$interface\"\n\tMaxMissed -1\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
+	sed -i "s/<Plugin dns><\/Plugin>/<Plugin dns>\n\tInterface \"$interface\"\n\tIgnoreSource \"192.168.0.1\"\n\tSelectNumericQueryTypes false\n\t<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
+
+	sed -i "s/<Plugin ethstat><\/Plugin>/<Plugin ethstat>\n\tInterface \"$interface\"\n\tMap \"rx_csum_offload_errors\" \"if_rx_errors\" \"checksum_offload\"\n\tMap \"multicast\" \"if_multicast\"\n\tMappedOnly false\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
+
+	sed -i "s/<Plugin ethsys><\/Plugin>/<Plugin ethsys>\n\tInterface \"$interface\"\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
+
+	sed -i "s/<Plugin interface><\/Plugin>/<Plugin interface>\n\tInterface \"$interface\"\n\tIgnoreSelected false\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
+
+	sed -i "s/<Plugin curl><\/Plugin>/<Plugin curl>\n\t<Page \"$page\">\n\t\tURL \"$page\"\n\t\tVerifyPeer false\n\t\tVerifyHost false\n\t\tMeasureResponseTime true\n\t<\/Page>\n<\/Plugin>/g" ~/.grmwl/$1/collectd.conf
+
 	cp local_settings.py ~/.grmwl/$1/local_settings.py
 	tmp=`sudo docker run -d --name $1 -v ~/.grmwl/$1/log:/var/log/graphite -v ~/.grmwl/$1/whisper:/var/lib/graphite/storage/whisper -v ~/.grmwl/$1/local_settings.py:/var/lib/graphite/lib/graphite/local_settings.py -p 8000:8000 -p 2003:2003 -p 2004:2004 mackerel/graphite`
 	echo $tmp > ~/.grmwl/$1/id
@@ -59,7 +84,9 @@ elif [ "$1" = "create" ]; then
 	else
 		echo "[+] Creating project $2..."
 		pull
-		build $2
+		build $2 $3
+		stop $2
+		start $2
 	fi
 	
 elif [ "$1" = "start" ]; then
@@ -92,6 +119,13 @@ elif [ "$1" = "delete" ]; then
 		sudo rm ~/.grmwl/$2 -R
 	fi
 else
-	echo "Usage : {init, list, create,run,delete} [project]"
+	echo
+	echo "Usage"
+	echo "\t* init: initialize repository and dependencies"
+	echo "\t* list: list all containers built with this tool"
+	echo "\t* build [project] [if]: build the container and config files for project [project] with autoconfig for interface [if]"
+	echo "\t* delete [project]: delete container and config files of project [project]"
+	echo "\t* start, stop, restart [project]: command to start, stop and restart the project container"
+	echo
 fi
 
