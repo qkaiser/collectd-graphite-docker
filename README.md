@@ -65,3 +65,21 @@ Workspaces are created at ~/.grmwl/ and contains the following
 ├── log				#graphite logs
 └── whisper			#graphite data
 ```
+
+### Monitoring autoconfiguration
+
+The `grmwl build` command take a workspace name and a network interface name to generate a collectd configuration file automagically. We configure collectd to provide the following : 
+
+#### Available
+
+* DNS traffic monitoring with dns plugin
+* ICMP echo requests to default gateway (response time, droprate, stddev) with ping plugin
+* dropped, errors, octets and packets transmitted over the line with netlink plugin
+* device status (speed, duplex, autonegotiation, link status) with ethsys plugin
+* curl icanhaszip.com every 30 seconds with curl plugin
+
+#### Soon
+
+* DNS request to default gateway every 10 seconds with dnsrequest plugin
+* ARP ping requests to the default gateway
+
