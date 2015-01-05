@@ -22,14 +22,16 @@ $ ./grmwl init
 
 #### Create a new workspace
 
+This will create the workspace `new_project` with collectd autoconfigured to monitor the `eth0` interface.
+
 ```shell
-$ ./grmwl create new_project
+$ ./grmwl create new_project eth0
 ```
 
 #### Launching the container
 
 ```shell
-$ ./grmwl run new_project
+$ ./grmwl start new_project
 ```
 
 #### Stopping the container
@@ -63,7 +65,3 @@ Workspaces are created at ~/.grmwl/ and contains the following
 ├── log				#graphite logs
 └── whisper			#graphite data
 ```
-
-### Default monitoring settings
-
-
