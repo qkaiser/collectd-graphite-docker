@@ -27,7 +27,7 @@ install_docker(){
 }
 
 install_arping(){
-	sudo apt-get install arping
+	sudo apt-get install iputils-arping
 }
 
 start(){
@@ -91,6 +91,7 @@ elif [ "$1" = "create" ]; then
 		echo "[+] Creating project $2..."
 		pull
 		build $2
+		python createdashboards.py
 		stop $2
 	fi
 	
