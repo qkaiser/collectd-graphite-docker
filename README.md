@@ -22,16 +22,16 @@ $ ./grmwl init
 
 #### Create a new workspace
 
-This will create the workspace `new_project` with collectd autoconfigured to monitor the `eth0` interface.
-
 ```shell
 $ ./grmwl create new_project eth0
 ```
 
 #### Launching the container
 
+This will start the container from project `new_project` with collectd autoconfigured to monitor the `eth0` interface.
+
 ```shell
-$ ./grmwl start new_project
+$ ./grmwl start new_project eth0
 ```
 
 #### Stopping the container
