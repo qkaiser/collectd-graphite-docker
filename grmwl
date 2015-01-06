@@ -26,6 +26,10 @@ install_docker(){
 	sudo apt-get install docker.io
 }
 
+install_arping(){
+	sudo apt-get install arping
+}
+
 start(){
 	cp collectd.conf ~/.grmwl/$1/collectd.conf	
 	hostname=`hostname`
@@ -71,6 +75,7 @@ clean_container(){
 if [ "$1" = "init" ]; then
 	install_collectd
 	install_docker	
+	install_arping
 elif [ "$1" = "list" ]; then
 	for i in $(ls ~/.grmwl); do 
                 if sudo docker ps --no-trunc | grep `cat ~/.grmwl/$i/id` 2>&1 >/dev/null; then
