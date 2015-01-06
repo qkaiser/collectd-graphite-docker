@@ -1,0 +1,36 @@
+#!/bin/bash
+SERVER="localhost"
+PORT=2003
+
+hostnames=( "www.google.com" "www.gremwell.com" )
+
+if [ -z "$1" ]
+then
+	echo "Usage: $0 interface"
+else
+	interface=$1	
+	while true; do
+		addr=`ifconfig $interface | grep 'inet addr:'| cut -d: -f2 | awk '{ print $1 }'`
+		gateway=`netstat -r | grep \"$interface\" | head -n 1 | awk '{ print $2 }'`
+		if [ "$gateway" = "" ]; then
+		 	base=`echo $addr | cut -d'.' -f1,2,3`
+			gateway="$base.1"
+		fi
+		gateway_clean=`echo $gateway | sed -e "s/\./_/g"`
+
+		if [ -z "$addr" ]; then
+			echo "dns.$gateway_clean.$hostname_clean.querytime 0.1 `date +%s`" | nc -q0 ${SERVER} ${PORT}
+			sleep 5
+		else
+			while true; do
+				for hostname in "${hostnames[@]}"
+				do
+					query_time=`dig @$gateway $hostname +time=5 | grep "Query time" | cut -d' ' -f 4`
+					hostname_clean=`echo $hostname | sed -e "s/\./_/g"`
+					echo "dns.$gateway_clean.$hostname_clean.querytime $query_time `date +%s`" | nc -q0 ${SERVER} ${PORT}
+				done
+				sleep 5
+			done
+		fi
+	done
+fi

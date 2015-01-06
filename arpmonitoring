@@ -1,0 +1,24 @@
+#!/bin/sh
+SERVER="localhost"
+PORT=2003
+
+if [ -z "$1" ]
+then
+	echo "Usage: $0 interface"
+else
+	interface=$1
+	addr=`ifconfig $interface | grep 'inet addr:'| cut -d: -f2 | awk '{ print $1}'`
+	gateway=`netstat -r | grep 'default' | awk '{ print $2}'`
+	gateway=`netstat -r | grep \"$interface\" | head -n 1 | awk '{ print $2 }'`
+	if [ "$gateway" = "" ]; then
+        	base=`echo $addr | cut -d'.' -f1,2,3`
+	        gateway="$base.1"
+	fi
+	gateway_clean=`echo $gateway | sed -e "s/\./_/g"`
+	
+	while true; do
+		response_time=`arping -c 1 -w 1 -I $interface -s $addr $gateway | head -n 2 | tail -n 1 | cut -d' ' -f7 | tr -d 'ms'`
+		echo "arpping.$gateway_clean.responsetime $response_time `date +%s`" | nc -q0 ${SERVER} ${PORT}
+		sleep 1
+	done
+fi
