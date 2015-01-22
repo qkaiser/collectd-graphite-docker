@@ -15,7 +15,6 @@ else
 	        gateway="$base.1"
 	fi
 	gateway_clean=`echo $gateway | sed -e "s/\./_/g"`
-	
 	while true; do
 		response_time=`arping -c 1 -w 1 -I $interface -s $addr $gateway | head -n 2 | tail -n 1 | cut -d' ' -f7 | tr -d 'ms'`
 		echo "arpping.$gateway_clean.responsetime $response_time `date +%s`" | nc -q0 ${SERVER} ${PORT}
