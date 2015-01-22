@@ -17,7 +17,7 @@ build(){
 install_collectd(){
 	git submodule init
 	git submodule update
-	sudo apt-get install libmnl-dev libcurl4-gnutls-dev librtmp-dev libgnutls-dev libgcrypt11-dev
+	sudo apt-get install libmnl-dev libcurl4-gnutls-dev librtmp-dev libgnutls-dev libgcrypt11-dev libtool flex bison automake liboping-dev libpcap-dev
 	cd collectd && ./build.sh 1>/dev/null && ./configure 1>/dev/null && sudo make && sudo make install
 }
 
