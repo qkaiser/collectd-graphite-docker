@@ -75,8 +75,10 @@ start(){
 stop(){
 	ps xa -o pid,cmd | grep "/opt/collectd/sbin/collectd -C ~/.grmwl/$1/collectd.conf" | cut -c 1- | cut -d\  -f 1 | xargs --no-run-if-empty sudo kill
 	sudo docker stop `cat ~/.grmwl/$1/id`
-	sudo kill `cat ~/.grmwl/$1/arpmonitoring.pid`
-	sudo kill `cat ~/.grmwl/$1/dnsmonitoring.pid` 
+	for i in `ls ~/.grmwl/$1/*.pid`; do
+		sudo kill `cat $i`
+		rm $i
+	done
 }
 
 clean_container(){
