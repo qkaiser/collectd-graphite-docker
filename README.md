@@ -72,8 +72,6 @@ The configuration files are stored, per workspace, into `~/.grmwl` directory. Th
 
 The `grmwl build` command take a workspace name and a network interface name to generate a collectd configuration file automagically. We configure collectd to provide the following : 
 
-#### Available
-
 * DNS traffic monitoring with dns plugin
 * ICMP echo requests to default gateway (response time, droprate, stddev) with ping plugin
 * dropped, errors, octets and packets transmitted over the line with netlink plugin
