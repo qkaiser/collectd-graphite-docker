@@ -98,11 +98,11 @@ elif [ "$1" = "list" ]; then
 			echo -e  "[+] $i - stopped"
 		fi
 	done
-elif [ "$1" = "create" ]; then
+elif [ "$1" = "build" ]; then
 	if [ -x ~/.grmwl/$2/id ]; then
-		echo -e  "[!] Project already created."
+		echo -e  "[!] Project already built."
 	else
-		echo -e  "[+] Creating project $2..."
+		echo -e  "[+] Building project $2..."
 		pull
 		build $2
 		python createdashboards.py

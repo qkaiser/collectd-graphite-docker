@@ -23,7 +23,7 @@ $ ./grmwl init
 #### Create a new workspace
 
 ```shell
-$ ./grmwl create new_project eth0
+$ ./grmwl create new_project
 ```
 
 #### Launching the container
