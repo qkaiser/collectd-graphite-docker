@@ -1,4 +1,4 @@
-collectd-graphite-docker
+Monitoring
 ========================
 
 This project purpose is to monitor network interfaces during penetration tests. 
@@ -52,18 +52,6 @@ $ ./grmwl delete new_project
 $ ./grmwl list
 [+] new_project - running
 [+] old_project - stopped
-```
-
-### Workspace
-
-Workspaces are created at ~/.grmwl/ and contains the following
-
-```
-├── collectd.conf		#collectd config
-├── id				#docker container id
-├── local_settings.py		#graphite web settings
-├── log				#graphite logs
-└── whisper			#graphite data
 ```
 
 ### Monitoring autoconfiguration
