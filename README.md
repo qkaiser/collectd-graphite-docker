@@ -58,9 +58,9 @@ $ ./grmwl list
 
 Information is gathered by the following process and sent to a graphite server running in a docker container.
 
-	* collectd daemon 
-	* arpmonitoring script
-	* dnsmonitoring script
+* collectd daemon 
+* arpmonitoring script
+* dnsmonitoring script
 
 The docker container run a graphite server which receive data on port tcp/2003 and provide a web interface on port tcp/8000.
 These services are port mapped by docker so you are able to access the web interface by directing your browser to http://localhost:8000/ and http://localhost:8000/dashboard
