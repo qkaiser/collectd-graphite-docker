@@ -1,7 +1,7 @@
 Monitoring
 ========================
 
-This project purpose is to monitor network interfaces during penetration tests. 
+This project purpose is to monitor network connectivity and availability of network services during penetration tests. 
 
 The idea is to have a workspace for each pentest that will have his own container, configuration files and logged data.
 
