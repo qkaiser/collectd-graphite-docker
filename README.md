@@ -28,10 +28,11 @@ $ ./grmwl build new_project
 
 #### Launching the container
 
-This will start the container from project `new_project` with collectd autoconfigured to monitor the `eth0` interface.
+This will start the container from project `new_project` with collectd autoconfigured to monitor the `eth0` interface. 
+It's possible to provide a list of interfaces to monitor by providing them separated by a comma.
 
 ```shell
-$ ./grmwl start new_project eth0
+$ ./grmwl start new_project eth0[,eth1,wlan0]
 ```
 
 #### Stopping the container
@@ -82,6 +83,5 @@ The `grmwl build` command take a workspace name and a network interface name to 
 
 ### Accessing the interface
 
-Docker will create a port forwarding on port 8000 to the graphite web server. You can direct your browser to [http://localhost:8000/] to access the main interface and [http://localhost:8000/dashboard] 
-to access and manage your dashboards.
+Docker will create a port forwarding on port 8000 to the graphite web server. You can direct your browser to [http://localhost:8000/](http://localhost:8000) to access the main interface and [http://localhost:8000/dashboard](http://localhost:8000/dashboard) to access and manage your dashboards.
 
