@@ -1,7 +1,7 @@
 Monitoring
 ========================
 
-This project purpose is to monitor network interfaces during penetration tests. 
+This project purpose is to monitor network connectivity and availability of network services during penetration tests.
 
 The idea is to have a workspace for each pentest that will have his own container, configuration files and logged data.
 
@@ -84,4 +84,3 @@ The `grmwl build` command take a workspace name and a network interface name to 
 ### Accessing the interface
 
 Docker will create a port forwarding on port 8000 to the graphite web server. You can direct your browser to [http://localhost:8000/](http://localhost:8000) to access the main interface and [http://localhost:8000/dashboard](http://localhost:8000/dashboard) to access and manage your dashboards.
-
