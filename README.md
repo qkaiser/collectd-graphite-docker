@@ -70,7 +70,7 @@ The configuration files are stored, per workspace, into `~/.grmwl` directory. Th
 
 ### Monitoring autoconfiguration
 
-The `grmwl build` command take a workspace name and a network interface name to generate a collectd configuration file automagically. We configure collectd to provide the following : 
+The `grmwl start` command take a workspace name and a network interface name to generate a collectd configuration file automagically. We configure collectd to provide the following : 
 
 * DNS traffic monitoring with dns plugin
 * ICMP echo requests to default gateway (response time, droprate, stddev) with ping plugin
@@ -84,4 +84,3 @@ The `grmwl build` command take a workspace name and a network interface name to 
 
 Docker will create a port forwarding on port 8000 to the graphite web server. You can direct your browser to [http://localhost:8000/] to access the main interface and [http://localhost:8000/dashboard] 
 to access and manage your dashboards.
-
