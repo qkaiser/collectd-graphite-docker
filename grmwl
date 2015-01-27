@@ -45,7 +45,6 @@ start(){
 		gateway=`netstat -r | grep 'default' | awk '{ print $2}'`
 		gateway=`netstat -r | grep \"$interface\" | head -n 1 | awk '{ print $2 }'`
         	
-		#TODO: this is not right but works most of the time if the network config is not exotic ...
 		if [ "$gateway" = "" ]; then
 	                base=`echo $addr | cut -d'.' -f1,2,3`
                 	gateway="$base.1"
@@ -69,7 +68,7 @@ start(){
 	
 	sudo /opt/collectd/sbin/collectd -C ~/.grmwl/$1/collectd.conf	
 	sudo docker start `cat ~/.grmwl/$1/id`
-	echo -e  "[+] Graphite UI\n\thttp://localhost:8000/\n\n[+] Dashboards\n\thttp://localhost:8000/dashboard/#eth0\n\thttp://localhost:8000/dashboard/#wlan0"
+	echo -e  "[+] Graphite UI\n\thttp://localhost:8000/\n\n[+] Dashboard\n\thttp://localhost:8000/dashboard"
 }
 
 stop(){
@@ -90,7 +89,6 @@ if [ "$1" = "init" ]; then
 	install_docker	
 	install_arping
 elif [ "$1" = "list" ]; then
-	echo -e  "hey"
 	for i in $(ls ~/.grmwl); do 
                 if sudo docker ps --no-trunc | grep `cat ~/.grmwl/$i/id` 2>&1 >/dev/null; then
 			echo -e  "[+] $i - running"
