@@ -97,7 +97,7 @@ elif [ "$1" = "list" ]; then
 		fi
 	done
 elif [ "$1" = "build" ]; then
-	if [ -x ~/.grmwl/$2/id ]; then
+	if [ ! -f ~/.grmwl/$2/id ]; then
 		echo -e  "[!] Project already built."
 	else
 		echo -e  "[+] Building project $2..."
@@ -108,8 +108,8 @@ elif [ "$1" = "build" ]; then
 	fi
 	
 elif [ "$1" = "start" ]; then
-	if [ -x ~/.grmwl/$2/id ]; then
-		echo -e  "[!] Project does not exist, you need to create it first ($0 create $2)"
+	if [ ! -f ~/.grmwl/$2/id ]; then
+		echo -e  "[!] Project does not exist, you need to create it first ($0 build $2)"
 	else
 		if [ -z "$3" ]; then
 			echo -e  "You need to specify an interface that will be monitored."
@@ -123,7 +123,7 @@ elif [ "$1" = "start" ]; then
 		fi
 	fi
 elif [ "$1" = "stop" ]; then
-	if [ -x ~/.grmwl/$2/id ]; then
+	if [ ! -f ~/.grmwl/$2/id ]; then
 		echo -e  "[!] Project does not exist, you need to create it first ($0 create $2)"
 	else
 		echo -e  "[+] Stopping project $2..."
@@ -133,7 +133,7 @@ elif [ "$1" = "restart" ]; then
 	stop $2
 	start $2
 elif [ "$1" = "delete" ]; then
-	if [ -x ~/.grmwl/$2/id ]; then
+	if [ ! -f ~/.grmwl/$2/id ]; then
 		echo -e  "[!] Project $2 does not exist."
 	else
 		echo -e  "[+] Deleting project $2..."
